@@ -105,7 +105,7 @@ const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
               <div className="relative z-10 max-w-3xl space-y-6">
                 <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/30 text-xs font-semibold">
                   <Activity className="w-4 h-4 text-emerald-400" />
-                  CarePulse Clinical Healthcare & EHR Platform
+                  CarePulse Patient Management System 
                 </div>
 
                 <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
