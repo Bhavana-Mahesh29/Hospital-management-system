@@ -27,8 +27,8 @@ import {
 const MainContent: React.FC = () => {
   const { user, role, logoutReason, clearLogoutReason } = useAuth();
 
-  const [currentTab, setCurrentTab] = useState<string>('book');
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+ const [currentTab, setCurrentTab] = useState<string>('doctor-quick-schedule');
+const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
   const [initialAuthTab, setInitialAuthTab] = useState<
     'patient-login' | 'doctor-login' | 'admin-login' | 'patient-register'
   >('patient-login');
