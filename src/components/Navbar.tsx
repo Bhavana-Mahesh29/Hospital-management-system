@@ -15,6 +15,9 @@ import {
   CheckCircle,
   AlertTriangle,
   RotateCcw,
+  Users,
+  LayoutDashboard,
+  ShieldCheck,
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -88,7 +91,65 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, openA
           {/* Navigation links if logged in */}
           {user && (
             <nav className="hidden md:flex items-center gap-1">
-              {role === 'patient' ? (
+              {role === 'admin' ? (
+                <>
+                  <button
+                    onClick={() => setCurrentTab('admin-dashboard')}
+                    className={`flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      currentTab === 'admin-dashboard'
+                        ? 'bg-indigo-50 text-indigo-700 font-semibold'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    }`}
+                  >
+                    <LayoutDashboard className="w-4 h-4 text-indigo-600" />
+                    Dashboard
+                  </button>
+                  <button
+                    onClick={() => setCurrentTab('admin-doctors')}
+                    className={`flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      currentTab === 'admin-doctors'
+                        ? 'bg-indigo-50 text-indigo-700 font-semibold'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    }`}
+                  >
+                    <Stethoscope className="w-4 h-4 text-indigo-600" />
+                    Doctors
+                  </button>
+                  <button
+                    onClick={() => setCurrentTab('admin-appointments')}
+                    className={`flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      currentTab === 'admin-appointments'
+                        ? 'bg-indigo-50 text-indigo-700 font-semibold'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    }`}
+                  >
+                    <Calendar className="w-4 h-4 text-indigo-600" />
+                    Appointments
+                  </button>
+                  <button
+                    onClick={() => setCurrentTab('admin-patients')}
+                    className={`flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      currentTab === 'admin-patients'
+                        ? 'bg-indigo-50 text-indigo-700 font-semibold'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    }`}
+                  >
+                    <Users className="w-4 h-4 text-indigo-600" />
+                    Patients
+                  </button>
+                  <button
+                    onClick={() => setCurrentTab('admin-security')}
+                    className={`flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      currentTab === 'admin-security'
+                        ? 'bg-indigo-50 text-indigo-700 font-semibold'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    }`}
+                  >
+                    <ShieldAlert className="w-4 h-4 text-indigo-600" />
+                    Security & Locks
+                  </button>
+                </>
+              ) : role === 'patient' ? (
                 <>
                   <button
                     onClick={() => setCurrentTab('book')}
@@ -258,13 +319,29 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, openA
 
                 {/* User Profile Badge */}
                 <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
-                  <div className="w-8 h-8 rounded-full bg-teal-100 border border-teal-200 flex items-center justify-center text-teal-700 font-bold text-xs">
+                  <div
+                    className={`w-8 h-8 rounded-full border flex items-center justify-center font-bold text-xs ${
+                      role === 'admin'
+                        ? 'bg-indigo-100 border-indigo-200 text-indigo-700'
+                        : 'bg-teal-100 border-teal-200 text-teal-700'
+                    }`}
+                  >
                     {user.name.charAt(0)}
                   </div>
                   <div className="hidden lg:block text-left">
                     <p className="text-xs font-semibold text-slate-900 leading-tight">{user.name}</p>
-                    <span className="inline-block text-[10px] px-1.5 py-0.2 rounded font-medium capitalize bg-slate-100 text-slate-600">
-                      {role === 'doctor' ? `Dr. • ${user.department || 'Physician'}` : 'Patient'}
+                    <span
+                      className={`inline-block text-[10px] px-1.5 py-0.5 rounded font-medium capitalize ${
+                        role === 'admin'
+                          ? 'bg-indigo-100 text-indigo-800 font-bold'
+                          : 'bg-slate-100 text-slate-600'
+                      }`}
+                    >
+                      {role === 'admin'
+                        ? `Admin • ${user.adminLevel || 'Hospital Admin'}`
+                        : role === 'doctor'
+                        ? `Dr. • ${user.department || 'Physician'}`
+                        : 'Patient'}
                     </span>
                   </div>
 
@@ -293,7 +370,55 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, openA
         {/* Mobile Navigation bar */}
         {user && (
           <div className="flex md:hidden items-center justify-around border-t border-slate-100 py-2">
-            {role === 'patient' ? (
+            {role === 'admin' ? (
+              <>
+                <button
+                  onClick={() => setCurrentTab('admin-dashboard')}
+                  className={`flex flex-col items-center gap-1 text-[11px] py-1 px-1.5 rounded ${
+                    currentTab === 'admin-dashboard' ? 'text-indigo-700 font-bold' : 'text-slate-600'
+                  }`}
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  Stats
+                </button>
+                <button
+                  onClick={() => setCurrentTab('admin-doctors')}
+                  className={`flex flex-col items-center gap-1 text-[11px] py-1 px-1.5 rounded ${
+                    currentTab === 'admin-doctors' ? 'text-indigo-700 font-bold' : 'text-slate-600'
+                  }`}
+                >
+                  <Stethoscope className="w-4 h-4" />
+                  Doctors
+                </button>
+                <button
+                  onClick={() => setCurrentTab('admin-appointments')}
+                  className={`flex flex-col items-center gap-1 text-[11px] py-1 px-1.5 rounded ${
+                    currentTab === 'admin-appointments' ? 'text-indigo-700 font-bold' : 'text-slate-600'
+                  }`}
+                >
+                  <Calendar className="w-4 h-4" />
+                  Appts
+                </button>
+                <button
+                  onClick={() => setCurrentTab('admin-patients')}
+                  className={`flex flex-col items-center gap-1 text-[11px] py-1 px-1.5 rounded ${
+                    currentTab === 'admin-patients' ? 'text-indigo-700 font-bold' : 'text-slate-600'
+                  }`}
+                >
+                  <Users className="w-4 h-4" />
+                  Patients
+                </button>
+                <button
+                  onClick={() => setCurrentTab('admin-security')}
+                  className={`flex flex-col items-center gap-1 text-[11px] py-1 px-1.5 rounded ${
+                    currentTab === 'admin-security' ? 'text-indigo-700 font-bold' : 'text-slate-600'
+                  }`}
+                >
+                  <ShieldAlert className="w-4 h-4" />
+                  Locks
+                </button>
+              </>
+            ) : role === 'patient' ? (
               <>
                 <button
                   onClick={() => setCurrentTab('book')}

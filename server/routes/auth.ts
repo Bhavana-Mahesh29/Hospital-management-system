@@ -197,7 +197,7 @@ authRouter.post('/login', (req: Request, res: Response) => {
   const session = db.createSession(user);
 
   return res.json({
-    message: `${user.role === 'doctor' ? 'Doctor' : 'Patient'} logged in successfully.`,
+    message: `${user.role === 'doctor' ? 'Doctor' : user.role === 'admin' ? 'Administrator' : 'Patient'} logged in successfully.`,
     token: session.token,
     user: {
       id: user.id,
@@ -212,12 +212,17 @@ authRouter.post('/login', (req: Request, res: Response) => {
             gender: (user as any).gender,
             emergencyContact: (user as any).emergencyContact,
           }
-        : {
+        : user.role === 'doctor'
+        ? {
             department: (user as any).department,
             qualification: (user as any).qualification,
             room: (user as any).room,
             avatarUrl: (user as any).avatarUrl,
             unavailableDates: (user as any).unavailableDates,
+          }
+        : {
+            department: (user as any).department,
+            adminLevel: (user as any).adminLevel,
           }),
     },
     session,
@@ -242,12 +247,17 @@ authRouter.get('/me', authenticate, (req: Request, res: Response) => {
             gender: user.gender,
             emergencyContact: user.emergencyContact,
           }
-        : {
+        : user.role === 'doctor'
+        ? {
             department: user.department,
             qualification: user.qualification,
             room: user.room,
             avatarUrl: user.avatarUrl,
             unavailableDates: user.unavailableDates,
+          }
+        : {
+            department: user.department,
+            adminLevel: user.adminLevel,
           }),
     },
     session: {

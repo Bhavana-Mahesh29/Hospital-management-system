@@ -4,6 +4,7 @@ import { doctorsRouter } from './routes/doctors';
 import { appointmentsRouter } from './routes/appointments';
 import { ehrRouter } from './routes/ehr';
 import { notificationsRouter } from './routes/notifications';
+import { adminRouter } from './routes/admin';
 
 export const app: Express = express();
 
@@ -28,6 +29,7 @@ app.use('/api/doctors', doctorsRouter);
 app.use('/api/appointments', appointmentsRouter);
 app.use('/api/ehr', ehrRouter);
 app.use('/api/notifications', notificationsRouter);
+app.use('/api/admin', adminRouter);
 
 // Health check
 app.get('/api/health', (_req: Request, res: Response) => {

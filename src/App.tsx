@@ -8,6 +8,7 @@ import { PatientEHRView } from './components/patient/PatientEHRView';
 import { DoctorScheduleView } from './components/doctor/DoctorScheduleView';
 import { DoctorAvailabilityManager } from './components/doctor/DoctorAvailabilityManager';
 import { DoctorEHRDirectoryView } from './components/doctor/DoctorEHRDirectoryView';
+import { AdminDashboardView } from './components/admin/AdminDashboardView';
 import {
   Activity,
   Calendar,
@@ -28,18 +29,22 @@ const MainContent: React.FC = () => {
 
   const [currentTab, setCurrentTab] = useState<string>('book');
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
-  const [initialAuthTab, setInitialAuthTab] = useState<'patient-login' | 'doctor-login' | 'patient-register'>(
-    'patient-login'
-  );
+  const [initialAuthTab, setInitialAuthTab] = useState<
+    'patient-login' | 'doctor-login' | 'admin-login' | 'patient-register'
+  >('patient-login');
 
-  const openAuth = (tab: 'patient-login' | 'doctor-login' | 'patient-register' = 'patient-login') => {
+  const openAuth = (
+    tab: 'patient-login' | 'doctor-login' | 'admin-login' | 'patient-register' = 'patient-login'
+  ) => {
     setInitialAuthTab(tab);
     setIsAuthModalOpen(true);
   };
 
   // Sync default tab on login
   React.useEffect(() => {
-    if (role === 'doctor') {
+    if (role === 'admin') {
+      setCurrentTab('admin-dashboard');
+    } else if (role === 'doctor') {
       setCurrentTab('doctor-schedule');
     } else if (role === 'patient') {
       setCurrentTab('book');
@@ -132,6 +137,14 @@ const MainContent: React.FC = () => {
                   </button>
 
                   <button
+                    onClick={() => openAuth('admin-login')}
+                    className="px-5 py-3 rounded-xl font-bold text-sm bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all flex items-center gap-2"
+                  >
+                    <ShieldAlert className="w-4 h-4 text-indigo-300" />
+                    Admin Portal
+                  </button>
+
+                  <button
                     onClick={() => openAuth('patient-register')}
                     className="px-5 py-3 rounded-xl font-bold text-sm bg-teal-900/60 hover:bg-teal-900 text-teal-200 border border-teal-700/50 transition-all flex items-center gap-2"
                   >
@@ -163,6 +176,12 @@ const MainContent: React.FC = () => {
                       className="px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30"
                     >
                       Doctor: Dr. Marcus Chen (Neurology)
+                    </button>
+                    <button
+                      onClick={() => openAuth('admin-login')}
+                      className="px-3 py-1.5 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/30 font-semibold"
+                    >
+                      Admin: Evelyn Ross (admin@hospital.org)
                     </button>
                   </div>
                 </div>
@@ -214,6 +233,23 @@ const MainContent: React.FC = () => {
             {currentTab === 'doctor-availability' && <DoctorAvailabilityManager />}
             {currentTab === 'doctor-ehr' && <DoctorEHRDirectoryView />}
           </div>
+        )}
+
+        {/* ------------------- ROLE: ADMIN ------------------- */}
+        {user && role === 'admin' && (
+          <AdminDashboardView
+            initialSubTab={
+              currentTab === 'admin-doctors'
+                ? 'doctors'
+                : currentTab === 'admin-appointments'
+                ? 'appointments'
+                : currentTab === 'admin-patients'
+                ? 'patients'
+                : currentTab === 'admin-security'
+                ? 'security'
+                : 'dashboard'
+            }
+          />
         )}
       </main>
 

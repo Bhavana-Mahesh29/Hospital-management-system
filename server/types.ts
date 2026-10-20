@@ -1,4 +1,4 @@
-export type UserRole = 'patient' | 'doctor';
+export type UserRole = 'patient' | 'doctor' | 'admin';
 
 export interface BaseUser {
   id: string;
@@ -32,7 +32,13 @@ export interface DoctorUser extends BaseUser {
   unavailableDates: string[]; // YYYY-MM-DD
 }
 
-export type User = PatientUser | DoctorUser;
+export interface AdminUser extends BaseUser {
+  role: 'admin';
+  department: string;
+  adminLevel: 'SuperAdmin' | 'HospitalAdmin';
+}
+
+export type User = PatientUser | DoctorUser | AdminUser;
 
 export interface Session {
   token: string;

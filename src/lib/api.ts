@@ -120,4 +120,38 @@ export const api = {
   getNotifications: () => apiRequest('/api/notifications'),
   markAllNotificationsRead: () => apiRequest('/api/notifications/mark-all-read', { method: 'PATCH' }),
   markNotificationRead: (id: string) => apiRequest(`/api/notifications/${id}/read`, { method: 'PATCH' }),
+
+  // Administration
+  getAdminStats: () => apiRequest('/api/admin/stats'),
+  getAdminDoctors: () => apiRequest('/api/admin/doctors'),
+  addAdminDoctor: (doctorData: any) =>
+    apiRequest('/api/admin/doctors', {
+      method: 'POST',
+      body: JSON.stringify(doctorData),
+    }),
+  updateAdminDoctor: (id: string, doctorData: any) =>
+    apiRequest(`/api/admin/doctors/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(doctorData),
+    }),
+  getAdminPatients: () => apiRequest('/api/admin/patients'),
+  getAdminAppointments: (filters?: { status?: string; department?: string; doctorId?: string }) => {
+    const params = new URLSearchParams();
+    if (filters?.status) params.set('status', filters.status);
+    if (filters?.department) params.set('department', filters.department);
+    if (filters?.doctorId) params.set('doctorId', filters.doctorId);
+    const queryString = params.toString() ? `?${params.toString()}` : '';
+    return apiRequest(`/api/admin/appointments${queryString}`);
+  },
+  updateAdminAppointmentStatus: (id: string, status: string, reason?: string) =>
+    apiRequest(`/api/admin/appointments/${id}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status, reason }),
+    }),
+  getAdminSecurityAccounts: () => apiRequest('/api/admin/security/accounts'),
+  unlockAdminAccount: (email: string) =>
+    apiRequest('/api/admin/security/unlock', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }),
 };

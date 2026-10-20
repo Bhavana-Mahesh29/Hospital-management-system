@@ -1,4 +1,4 @@
-export type UserRole = 'patient' | 'doctor';
+export type UserRole = 'patient' | 'doctor' | 'admin';
 
 export interface User {
   id: string;
@@ -15,6 +15,34 @@ export interface User {
   room?: string;
   avatarUrl?: string;
   unavailableDates?: string[];
+  adminLevel?: string;
+}
+
+export interface AdminStats {
+  totalPatients: number;
+  totalDoctors: number;
+  totalAppointments: number;
+  scheduledCount: number;
+  completedCount: number;
+  cancelledCount: number;
+  totalEhrRecords: number;
+  todayAppointmentsCount: number;
+  lockedAccountsCount: number;
+  totalRevenue: number;
+  departmentCounts: Record<string, number>;
+  systemStatus: string;
+}
+
+export interface AdminAccountItem {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  failedLoginAttempts: number;
+  isLocked: boolean;
+  lockMinutesRemaining: number;
+  lockUntil: string | null;
+  createdAt: string;
 }
 
 export interface Doctor {
