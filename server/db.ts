@@ -2,6 +2,7 @@ import {
   User,
   PatientUser,
   DoctorUser,
+  AdminUser,
   Session,
   Appointment,
   EHRRecord,
@@ -42,6 +43,7 @@ export const DEPARTMENTS = [
 class Database {
   patients: PatientUser[] = [];
   doctors: DoctorUser[] = [];
+  admins: AdminUser[] = [];
   sessions: Map<string, Session> = new Map();
   appointments: Appointment[] = [];
   ehrRecords: EHRRecord[] = [];
@@ -444,6 +446,23 @@ class Database {
         createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
       },
     ];
+
+    // 6. Pre-seeded Administrators
+    this.admins = [
+      {
+        id: 'admin_1',
+        role: 'admin',
+        name: 'Chief Admin Evelyn Ross',
+        email: 'admin@hospital.org',
+        phone: '+1 (555) 100-2000',
+        password: 'Password123!',
+        department: 'Hospital Administration',
+        adminLevel: 'SuperAdmin',
+        failedLoginAttempts: 0,
+        lockUntil: null,
+        createdAt: new Date('2024-01-01').toISOString(),
+      },
+    ];
   }
 
   // --- Helper Methods ---
@@ -452,13 +471,17 @@ class Database {
     const cleanEmail = email.trim().toLowerCase();
     const p = this.patients.find((u) => u.email.toLowerCase() === cleanEmail);
     if (p) return p;
-    return this.doctors.find((u) => u.email.toLowerCase() === cleanEmail);
+    const d = this.doctors.find((u) => u.email.toLowerCase() === cleanEmail);
+    if (d) return d;
+    return this.admins.find((u) => u.email.toLowerCase() === cleanEmail);
   }
 
   findUserById(id: string): User | undefined {
     const p = this.patients.find((u) => u.id === id);
     if (p) return p;
-    return this.doctors.find((u) => u.id === id);
+    const d = this.doctors.find((u) => u.id === id);
+    if (d) return d;
+    return this.admins.find((u) => u.id === id);
   }
 
   findPatientById(id: string): PatientUser | undefined {
@@ -467,6 +490,10 @@ class Database {
 
   findDoctorById(id: string): DoctorUser | undefined {
     return this.doctors.find((u) => u.id === id);
+  }
+
+  findAdminById(id: string): AdminUser | undefined {
+    return this.admins.find((u) => u.id === id);
   }
 
   createPatient(data: Omit<PatientUser, 'id' | 'role' | 'failedLoginAttempts' | 'lockUntil' | 'createdAt'>): PatientUser {

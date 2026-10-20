@@ -15,12 +15,13 @@ import {
   CheckCircle2,
   Clock,
   Sparkles,
+  ShieldAlert,
 } from 'lucide-react';
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
-  initialTab?: 'patient-login' | 'doctor-login' | 'patient-register';
+  initialTab?: 'patient-login' | 'doctor-login' | 'admin-login' | 'patient-register';
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({
@@ -30,7 +31,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 }) => {
   const { login, registerPatient } = useAuth();
 
-  const [activeTab, setActiveTab] = useState<'patient-login' | 'doctor-login' | 'patient-register'>(initialTab);
+  const [activeTab, setActiveTab] = useState<'patient-login' | 'doctor-login' | 'admin-login' | 'patient-register'>(initialTab);
 
   // Form states
   const [loginEmail, setLoginEmail] = useState('');
@@ -67,41 +68,46 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setFieldErrors({});
   };
 
-  const handleTabChange = (tab: 'patient-login' | 'doctor-login' | 'patient-register') => {
+  const handleTabChange = (tab: 'patient-login' | 'doctor-login' | 'admin-login' | 'patient-register') => {
     setActiveTab(tab);
     resetMessages();
     setLockoutInfo(null);
   };
 
   // Demo accounts fast-fill
-  const fillDemoCredentials = (role: 'patient' | 'doctor', email: string) => {
+  const fillDemoCredentials = (role: 'patient' | 'doctor' | 'admin', email: string) => {
     resetMessages();
     setLockoutInfo(null);
     if (role === 'patient') {
       setActiveTab('patient-login');
       setLoginEmail(email);
       setLoginPassword('Password123!');
-    } else {
+    } else if (role === 'doctor') {
       setActiveTab('doctor-login');
+      setLoginEmail(email);
+      setLoginPassword('Password123!');
+    } else {
+      setActiveTab('admin-login');
       setLoginEmail(email);
       setLoginPassword('Password123!');
     }
   };
 
-  // ------------------- US-2 & US-3: LOGIN HANDLER -------------------
+  // ------------------- US-2 & US-3 & ADMIN: LOGIN HANDLER -------------------
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     resetMessages();
     setIsSubmitting(true);
 
-    const isDoctor = activeTab === 'doctor-login';
-    const requestedRole = isDoctor ? 'doctor' : 'patient';
+    const requestedRole = activeTab === 'doctor-login' ? 'doctor' : activeTab === 'admin-login' ? 'admin' : 'patient';
 
     try {
       await login(loginEmail, loginPassword, requestedRole);
       setSuccessMessage(
-        isDoctor
+        requestedRole === 'doctor'
           ? 'Doctor credentials verified. Redirecting to Doctor Schedule & Dashboard...'
+          : requestedRole === 'admin'
+          ? 'Administrator credentials verified. Redirecting to Hospital Admin Dashboard...'
           : 'Login successful. Redirecting to Patient Dashboard...'
       );
       setTimeout(() => {
@@ -216,6 +222,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center">
               {activeTab === 'doctor-login' ? (
                 <Stethoscope className="w-7 h-7 text-emerald-400" />
+              ) : activeTab === 'admin-login' ? (
+                <ShieldAlert className="w-7 h-7 text-indigo-300" />
               ) : (
                 <ShieldCheck className="w-7 h-7 text-teal-300" />
               )}
@@ -226,6 +234,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   ? 'New Patient Registration'
                   : activeTab === 'doctor-login'
                   ? 'Doctor Clinical Portal'
+                  : activeTab === 'admin-login'
+                  ? 'Hospital Administration Portal'
                   : 'Patient Portal Sign In'}
               </h2>
               <p className="text-xs text-teal-100">
@@ -233,42 +243,54 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   ? 'Create your digital healthcare profile'
                   : activeTab === 'doctor-login'
                   ? 'Access physician schedule, consultations & EHR'
+                  : activeTab === 'admin-login'
+                  ? 'Executive management, doctor staffing & hospital oversight'
                   : 'Manage appointments, health history & test results'}
               </p>
             </div>
           </div>
 
           {/* Tab Selector */}
-          <div className="grid grid-cols-3 gap-1 bg-black/20 p-1 rounded-xl mt-5">
+          <div className="grid grid-cols-4 gap-1 bg-black/20 p-1 rounded-xl mt-5">
             <button
               onClick={() => handleTabChange('patient-login')}
-              className={`py-2 text-xs font-semibold rounded-lg transition-all ${
+              className={`py-2 text-[11px] font-semibold rounded-lg transition-all ${
                 activeTab === 'patient-login'
                   ? 'bg-white text-teal-900 shadow-sm'
                   : 'text-teal-100 hover:text-white hover:bg-white/10'
               }`}
             >
-              Patient Login
-            </button>
-            <button
-              onClick={() => handleTabChange('patient-register')}
-              className={`py-2 text-xs font-semibold rounded-lg transition-all ${
-                activeTab === 'patient-register'
-                  ? 'bg-white text-teal-900 shadow-sm'
-                  : 'text-teal-100 hover:text-white hover:bg-white/10'
-              }`}
-            >
-              Register Patient
+              Patient
             </button>
             <button
               onClick={() => handleTabChange('doctor-login')}
-              className={`py-2 text-xs font-semibold rounded-lg transition-all ${
+              className={`py-2 text-[11px] font-semibold rounded-lg transition-all ${
                 activeTab === 'doctor-login'
                   ? 'bg-emerald-500 text-white shadow-sm'
                   : 'text-teal-100 hover:text-white hover:bg-white/10'
               }`}
             >
-              Doctor Login
+              Doctor
+            </button>
+            <button
+              onClick={() => handleTabChange('admin-login')}
+              className={`py-2 text-[11px] font-semibold rounded-lg transition-all ${
+                activeTab === 'admin-login'
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'text-teal-100 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              Admin
+            </button>
+            <button
+              onClick={() => handleTabChange('patient-register')}
+              className={`py-2 text-[11px] font-semibold rounded-lg transition-all ${
+                activeTab === 'patient-register'
+                  ? 'bg-white text-teal-900 shadow-sm'
+                  : 'text-teal-100 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              Register
             </button>
           </div>
         </div>
@@ -315,12 +337,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </div>
           )}
 
-          {/* ------------------- TAB 1 & 2: LOGIN FORMS ------------------- */}
+          {/* ------------------- TAB 1, 2 & 3: LOGIN FORMS ------------------- */}
           {activeTab !== 'patient-register' ? (
             <form onSubmit={handleLoginSubmit} className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  {activeTab === 'doctor-login' ? 'Doctor Work Email' : 'Patient Email Address'}
+                  {activeTab === 'doctor-login'
+                    ? 'Doctor Work Email'
+                    : activeTab === 'admin-login'
+                    ? 'Hospital Administrator Email'
+                    : 'Patient Email Address'}
                 </label>
                 <div className="relative">
                   <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
@@ -330,7 +356,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
                     placeholder={
-                      activeTab === 'doctor-login' ? 'sarah.jenkins@hospital.org' : 'john@example.com'
+                      activeTab === 'doctor-login'
+                        ? 'sarah.jenkins@hospital.org'
+                        : activeTab === 'admin-login'
+                        ? 'admin@hospital.org'
+                        : 'john@example.com'
                     }
                     className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-slate-900"
                   />
@@ -358,6 +388,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 className={`w-full py-2.5 px-4 rounded-lg font-semibold text-sm text-white shadow-sm transition-all flex items-center justify-center gap-2 ${
                   activeTab === 'doctor-login'
                     ? 'bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-300'
+                    : activeTab === 'admin-login'
+                    ? 'bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300'
                     : 'bg-teal-600 hover:bg-teal-700 disabled:bg-teal-300'
                 }`}
               >
@@ -367,7 +399,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   <>
                     <KeyRound className="w-4 h-4" />
                     <span>
-                      {activeTab === 'doctor-login' ? 'Access Doctor Schedule' : 'Sign In to Patient Portal'}
+                      {activeTab === 'doctor-login'
+                        ? 'Access Doctor Schedule'
+                        : activeTab === 'admin-login'
+                        ? 'Access Hospital Administration'
+                        : 'Sign In to Patient Portal'}
                     </span>
                   </>
                 )}
@@ -406,7 +442,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                         <div className="text-[10px] text-slate-500">emily@example.com</div>
                       </button>
                     </>
-                  ) : (
+                  ) : activeTab === 'doctor-login' ? (
                     <>
                       <button
                         type="button"
@@ -427,6 +463,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                           Dr. Marcus Chen
                         </div>
                         <div className="text-[10px] text-slate-500">Neurology Specialist</div>
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => fillDemoCredentials('admin', 'admin@hospital.org')}
+                        className="p-2 text-left rounded-lg border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50/50 transition group col-span-2"
+                      >
+                        <div className="font-semibold text-xs text-slate-800 group-hover:text-indigo-700 flex items-center justify-between">
+                          <span>Chief Admin Evelyn Ross</span>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-800 font-bold">SuperAdmin</span>
+                        </div>
+                        <div className="text-[10px] text-slate-500">admin@hospital.org • Hospital Administration</div>
                       </button>
                     </>
                   )}
