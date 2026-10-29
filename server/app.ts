@@ -31,12 +31,20 @@ app.use('/api/ehr', ehrRouter);
 app.use('/api/notifications', notificationsRouter);
 app.use('/api/admin', adminRouter);
 
-// Health check
-app.get('/api/health', (_req: Request, res: Response) => {
+// API Root & Status check
+app.get(['/api', '/api/', '/api/status', '/api/health', '/health'], (_req: Request, res: Response) => {
   res.json({
-    status: 'healthy',
+    message: 'Smart Hospital Management System API is running!',
     system: 'CarePulse Clinical & EHR Scheduling System',
+    status: 'healthy',
     timestamp: new Date().toISOString(),
+  });
+});
+
+// Catch-all for unhandled /api requests
+app.all('/api/*', (_req: Request, res: Response) => {
+  res.status(404).json({
+    error: 'API endpoint not found',
   });
 });
 

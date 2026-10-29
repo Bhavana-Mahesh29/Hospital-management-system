@@ -27,8 +27,8 @@ import {
 const MainContent: React.FC = () => {
   const { user, role, logoutReason, clearLogoutReason } = useAuth();
 
- const [currentTab, setCurrentTab] = useState<string>('doctor-quick-schedule');
-const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [currentTab, setCurrentTab] = useState<string>('doctor-quick-schedule');
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
   const [initialAuthTab, setInitialAuthTab] = useState<
     'patient-login' | 'doctor-login' | 'admin-login' | 'patient-register'
   >('patient-login');
@@ -100,26 +100,20 @@ const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
         {!user && (
           <div className="space-y-12">
             {/* Hero Section */}
-            <div className="bg-gradient-to-br from-teal-900 via-slate-900 to-teal-950 rounded-3xl p-8 sm:p-12 text-white shadow-2xl relative overflow-hidden">
+            <div className="bg-gradient-to-br from-teal-900 via-slate-900 to-teal-950 rounded-3xl p-8 sm:p-14 text-white shadow-2xl relative overflow-hidden flex flex-col items-center justify-center text-center">
               <div className="absolute -right-24 -bottom-24 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
-              <div className="relative z-10 max-w-3xl space-y-6">
+              <div className="relative z-10 max-w-3xl w-full space-y-6 flex flex-col items-center">
                 <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/30 text-xs font-semibold">
                   <Activity className="w-4 h-4 text-emerald-400" />
-                  CarePulse Clinical Healthcare & EHR Platform
+                  Clinical Healthcare & EHR Platform
                 </div>
 
-                <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
-                  Intelligent Patient Scheduling & Electronic Health Records
+                <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-widest text-center uppercase text-white">
+                  CAREPULSE
                 </h1>
 
-                <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-                  A high-integrity clinical system connecting patients with board-certified physicians. Features 7-day
-                  real-time doctor availability calendars, automated appointment conflict resolution, late-cancellation
-                  safeguards, 15-minute idle security timeout, and confidential electronic health records (EHR).
-                </p>
-
                 {/* Primary Action Buttons */}
-                <div className="flex flex-wrap items-center gap-3 pt-2">
+                <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
                   <button
                     onClick={() => openAuth('patient-login')}
                     className="px-5 py-3 rounded-xl font-bold text-sm bg-teal-500 hover:bg-teal-400 text-slate-950 shadow-lg shadow-teal-500/25 transition-all flex items-center gap-2"
@@ -154,11 +148,11 @@ const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
                 </div>
 
                 {/* Quick Evaluator Access Pills */}
-                <div className="pt-6 border-t border-white/10">
-                  <span className="text-xs font-semibold text-teal-300 block mb-2">
+                <div className="pt-6 border-t border-white/10 w-full flex flex-col items-center">
+                  <span className="text-xs font-semibold text-teal-300 block mb-2 text-center">
                     ⚡ 1-Click Fast Demonstration Logins:
                   </span>
-                  <div className="flex flex-wrap items-center gap-2 text-xs">
+                  <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
                     <button
                       onClick={() => openAuth('patient-login')}
                       className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-200 border border-white/10"

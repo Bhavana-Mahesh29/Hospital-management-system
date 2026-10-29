@@ -30,9 +30,23 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, openA
   const { user, role, logout, idleSecondsRemaining, isIdleWarningVisible, simulateIdleTimeout, resetIdleTimer } =
     useAuth();
 
+  const [backendStatus, setBackendStatus] = useState<'checking' | 'connected' | 'error'>('checking');
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [showNotifMenu, setShowNotifMenu] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    fetch('/api/health')
+      .then((res) => {
+        if (!res.ok) throw new Error('API Offline');
+        return res.json();
+      })
+      .then(() => setBackendStatus('connected'))
+      .catch((err) => {
+        console.error('Backend connection check failed:', err);
+        setBackendStatus('error');
+      });
+  }, []);
 
   const fetchNotifs = async () => {
     if (!user) return;
@@ -227,6 +241,34 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, openA
 
           {/* Right actions */}
           <div className="flex items-center gap-3">
+            {/* Backend Connection Status Indicator */}
+            <div
+              className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${
+                backendStatus === 'connected'
+                  ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                  : backendStatus === 'checking'
+                  ? 'bg-amber-50 border-amber-200 text-amber-700'
+                  : 'bg-rose-50 border-rose-200 text-rose-700'
+              }`}
+            >
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  backendStatus === 'connected'
+                    ? 'bg-emerald-500 animate-pulse'
+                    : backendStatus === 'checking'
+                    ? 'bg-amber-500 animate-ping'
+                    : 'bg-rose-500'
+                }`}
+              />
+              <span className="font-semibold">
+                {backendStatus === 'connected'
+                  ? 'Backend Connected'
+                  : backendStatus === 'checking'
+                  ? 'Connecting...'
+                  : 'Backend Disconnected'}
+              </span>
+            </div>
+
             {user ? (
               <>
                 {/* 15-Minute Session Idle Indicator & Test Simulator */}
